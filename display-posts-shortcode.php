@@ -3,8 +3,8 @@
  * Plugin Name: Display Posts Shortcode
  * Plugin URI: http://www.billerickson.net/shortcode-to-display-posts/
  * Description: Display a listing of posts using the [display-posts] shortcode
- * Version: 2.4.2
- * Author: Bill Erickson
+ * Version: 2.4.2.x
+ * Author: Bill Erickson, Colin Domoney
  * Author URI: http://www.billerickson.net
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU 
@@ -15,8 +15,8 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
  * @package Display Posts
- * @version 2.4.2
- * @author Bill Erickson <bill@billerickson.net>
+ * @version 2.4.2.x
+ * @author Bill Erickson <bill@billerickson.net>, Colin Domoney
  * @copyright Copyright (c) 2011, Bill Erickson
  * @link http://www.billerickson.net/shortcode-to-display-posts/
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -93,6 +93,7 @@ function be_display_posts_shortcode( $atts ) {
 		'wrapper'             => 'ul',
 		'wrapper_class'       => 'display-posts-listing',
 		'wrapper_id'          => false,
+        'with_divi'           => false,
 	), $atts, 'display-posts' );
 	
 	// End early if shortcode should be turned off
@@ -138,9 +139,14 @@ function be_display_posts_shortcode( $atts ) {
 	$time                = sanitize_text_field( $atts['time'] );
 	$wrapper             = sanitize_text_field( $atts['wrapper'] );
 	$wrapper_class       = sanitize_html_class( $atts['wrapper_class'] );
+    $with_divi           = filter_var( $atts['with_divi'], FILTER_VALIDATE_BOOLEAN );
 
-	if( !empty( $wrapper_class ) )
+	if( !empty( $wrapper_class ) and !$with_divi )
 		$wrapper_class = ' class="' . $wrapper_class . '"';
+
+    if ($with_divi)
+        $wrapper_class = ' class="' . $wrapper_class . ' et_pb_posts"';
+
 	$wrapper_id = sanitize_html_class( $atts['wrapper_id'] );
 	if( !empty( $wrapper_id ) )
 		$wrapper_id = ' id="' . $wrapper_id . '"';
@@ -385,7 +391,10 @@ function be_display_posts_shortcode( $atts ) {
 		
 		if ( $include_title ) {
 			/** This filter is documented in wp-includes/link-template.php */
-			$title = '<a class="title" href="' . apply_filters( 'the_permalink', get_permalink() ) . '">' . get_the_title() . '</a>';
+            if (!$with_divi)
+                $title = '<a class="title" href="' . apply_filters( 'the_permalink', get_permalink() ) . '">' . get_the_title() . '</a>';
+            else
+                $title = '<h2 class="title" href="' . apply_filters( 'the_permalink', get_permalink() ) . '">' . get_the_title() . '</h2>';
 		}
 
 		if ( $image_size && has_post_thumbnail() )  
@@ -410,8 +419,13 @@ function be_display_posts_shortcode( $atts ) {
 		if( $include_content ) {
 			add_filter( 'shortcode_atts_display-posts', 'be_display_posts_off', 10, 3 );
 			/** This filter is documented in wp-includes/post-template.php */
-			$content = '<div class="content">' . apply_filters( 'the_content', get_the_content() ) . '</div>';
-			remove_filter( 'shortcode_atts_display-posts', 'be_display_posts_off', 10, 3 );
+			if (!$with_divi)
+                $content = '<div class="content">' . apply_filters( 'the_content', get_the_content() ) . '</div>';
+            else
+                $content = '<div class="content et_pb_post">' . apply_filters( 'the_content', get_the_content() ) . '</div>';
+
+
+            remove_filter( 'shortcode_atts_display-posts', 'be_display_posts_off', 10, 3 );
 		}
 		
 		// Display categories the post is in

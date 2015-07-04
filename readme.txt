@@ -1,5 +1,5 @@
 === Display Posts Shortcode ===
-Contributors: billerickson
+Contributors: billerickson, colindomoney
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MQKRBRFVRUV8C
 Tags: shortcode, pages, posts, page, query, display, list
 Requires at least: 3.0
@@ -15,6 +15,8 @@ The *Display Posts Shortcode* was written to allow users to easily display listi
 Add the shortcode in a post or page, and use the arguments to query based on tag, category, post type, and many other possibilities (see the Arguments). I've also added some extra options to display something more than just the title: include_date, include_excerpt, and image_size.
 
 See the [WordPress Codex](http://codex.wordpress.org/Class_Reference/WP_Query) for information on using the arguments.
+
+Support added for the Elegant Themes Divi theme.
 
 [Documentation](https://github.com/billerickson/display-posts-shortcode/wiki)
 
